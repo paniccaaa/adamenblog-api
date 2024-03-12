@@ -10,7 +10,7 @@ import (
 )
 
 type Config struct {
-	Env string `yaml:"env" env-default:"local"`
+	Env        string `yaml:"env" env-default:"local"`
 	HTTPServer `yaml:"http_server"`
 }
 
@@ -50,7 +50,7 @@ func MustLoad() (*Config, *ConfigDatabase) {
 	if err != nil {
 		log.Fatalf("cannot read .env db: %s", err)
 	}
-	
+
 	return &cfg, &cfgDB
 }
 

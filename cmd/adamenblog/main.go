@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/paniccaaa/adamenblog/internal/config"
+	"github.com/paniccaaa/adamenblog/internal/storage/postgres"
 )
 
 const (
@@ -18,19 +19,24 @@ func main() {
 	//TODO: init config: cleanenv
 	cfg, cfgDB := config.MustLoad()
 
-	fmt.Println(cfg, "\n", cfgDB)
-
 	//TODO: init logger: slog
 	log := setupLogger(cfg.Env)
-	
+
 	log.Info(
-		"starting adamen-blog", 
+		"starting adamenblog",
 		slog.String("env", cfg.Env),
 	)
 
 	log.Debug("debug messages are enabled")
-	
+
 	//TODO: init storage postgresql
+	storage, err := postgres.NewPostgres(cfgDB)
+	if err != nil {
+		log.Error("failed to init storage: %s", err)
+		os.Exit(1)
+	}
+
+	fmt.Println(storage)
 
 	//TODO: init router chi, chi-render
 
@@ -40,6 +46,7 @@ func main() {
 
 func setupLogger(env string) *slog.Logger {
 	var log *slog.Logger
+
 	switch env {
 	case envLocal:
 		log = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
@@ -50,6 +57,6 @@ func setupLogger(env string) *slog.Logger {
 	default: //if env config is invalid, set prod settings by default due to security
 		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	}
-	
+
 	return log
 }
