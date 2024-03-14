@@ -1,12 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"log/slog"
 	"os"
 
-	"github.com/paniccaaa/adamenblog/internal/config"
-	"github.com/paniccaaa/adamenblog/internal/storage/postgres"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/paniccaaa/adamenblog-api/internal/config"
+	"github.com/paniccaaa/adamenblog-api/internal/storage/postgres"
 )
 
 const (
@@ -16,30 +17,28 @@ const (
 )
 
 func main() {
-	//TODO: init config: cleanenv
 	cfg, cfgDB := config.MustLoad()
 
-	//TODO: init logger: slog
 	log := setupLogger(cfg.Env)
-
 	log.Info(
 		"starting adamenblog",
 		slog.String("env", cfg.Env),
 	)
-
 	log.Debug("debug messages are enabled")
 
-	//TODO: init storage postgresql
 	storage, err := postgres.NewPostgres(cfgDB)
 	if err != nil {
 		log.Error("failed to init storage: %s", err)
 		os.Exit(1)
 	}
 
-	fmt.Println(storage)
-
 	//TODO: init router chi, chi-render
+	router := chi.NewRouter()
 
+	router.Use(middleware.RequestID)
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
 	//TODO: run server
 
 }
