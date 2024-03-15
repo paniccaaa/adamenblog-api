@@ -2,11 +2,14 @@ package main
 
 import (
 	"log/slog"
+	"net/http"
 	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/render"
 	"github.com/paniccaaa/adamenblog-api/internal/config"
+	"github.com/paniccaaa/adamenblog-api/internal/http-server/handlers/post"
 	"github.com/paniccaaa/adamenblog-api/internal/storage/postgres"
 )
 
@@ -32,15 +35,30 @@ func main() {
 		os.Exit(1)
 	}
 
-	//TODO: init router chi, chi-render
 	router := chi.NewRouter()
 
 	router.Use(middleware.RequestID)
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
-	//TODO: run server
+	router.Use(render.SetContentType(render.ContentTypeJSON))
+	
+	router.Get("/posts", post.HandleGetPosts(log, storage))
 
+	log.Info("starting server", slog.String("address", cfg.Address))
+
+	srv := &http.Server{
+		Addr: cfg.Address,
+		Handler: router,
+		ReadTimeout: cfg.HTTPServer.Timeout,
+		WriteTimeout: cfg.HTTPServer.Timeout,
+		IdleTimeout: cfg.HTTPServer.IdleTimeout,
+	}
+	
+	if err := srv.ListenAndServe(); err != nil {
+		log.Error("failed to start server: %w", err)
+	}
+	
 }
 
 func setupLogger(env string) *slog.Logger {
