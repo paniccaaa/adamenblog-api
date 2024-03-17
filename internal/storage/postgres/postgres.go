@@ -22,11 +22,13 @@ func NewPostgres(cfg *cfg.ConfigDatabase) (*PostgresStore, error) {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	//defer db.Close()
-
 	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return &PostgresStore{db: db}, nil
+}
+
+func (p *PostgresStore) Close() error {
+	return p.db.Close()
 }

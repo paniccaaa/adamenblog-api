@@ -21,7 +21,7 @@ func (s *PostgresStore) GetPosts() ([]*Post, error) {
 	const op = "storage.postgres.GetPosts"
 	posts := []*Post{}
 
-	rows, err := s.db.Query("seect * from post;")
+	rows, err := s.db.Query("select * from post;")
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
