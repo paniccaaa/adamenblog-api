@@ -1,5 +1,5 @@
 env: "prod" #local, dev, prod
 http_server:
-  address: "3.75.158.163"
+  address: "3.75.158.163:8080"
   timeout: 4s
   idle_timeout: 60s
