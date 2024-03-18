@@ -29,7 +29,8 @@ type ConfigDatabase struct {
 }
 
 func MustLoad() (*Config, *ConfigDatabase) {
-	configPath := "./config/local.yaml"
+	//configPath := "./config/local.yaml"
+	configPath := "./config/prod.yaml"
 
 	//check if file exist
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
@@ -41,9 +42,9 @@ func MustLoad() (*Config, *ConfigDatabase) {
 		log.Fatalf("cannot read config: %s", err)
 	}
 
-	if err := LoadEnv(); err != nil {
-		log.Fatalf("error loading .env file: %s", err)
-	}
+	// if err := LoadEnv(); err != nil {
+	// 	log.Fatalf("error loading .env file: %s", err)
+	// }
 
 	var cfgDB ConfigDatabase
 	err := cleanenv.ReadEnv(&cfgDB)
