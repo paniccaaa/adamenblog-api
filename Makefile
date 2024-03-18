@@ -1,5 +1,5 @@
 build:
-	@go build -o bin/adamenblog-api
+	@go build -o build/adamenblog-api
 
 run:
 	@go run cmd/adamenblog-api/main.go
