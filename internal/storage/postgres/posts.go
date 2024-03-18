@@ -75,9 +75,19 @@ func (s *PostgresStore) CreatePost(post *Post) (*Post, error) {
 
 func (s *PostgresStore) UpdatePost(id int, post *Post) (*Post, error) {
 	const op = "storage.postgres.UpdatePost"
+
+	var count int
+	err := s.db.QueryRow("SELECT COUNT(*) FROM post WHERE id = $1", id).Scan(&count)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check post existence: %w", err)
+	}
+	if count == 0 {
+		return nil, fmt.Errorf("post with id %d does not exist", id)
+	}
+
 	updateQuery := `update post set title = $1, text = $2, image = $3 where id = $4;`
 
-	_, err := s.db.Exec(updateQuery, post.Title, post.Text, post.Image, id)
+	_, err = s.db.Exec(updateQuery, post.Title, post.Text, post.Image, id)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

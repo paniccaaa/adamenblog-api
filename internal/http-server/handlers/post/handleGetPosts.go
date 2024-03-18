@@ -32,8 +32,6 @@ func HandleGetPosts(log *slog.Logger, storage *postgres.PostgresStore) http.Hand
 			slog.String("request_id", middleware.GetReqID(r.Context())),
 		)
 
-		_ = log
-		
 		posts, err := storage.GetPosts()
 		if err != nil {
 			log.Error("failed to get post")
@@ -42,7 +40,7 @@ func HandleGetPosts(log *slog.Logger, storage *postgres.PostgresStore) http.Hand
 
 			render.JSON(w, r, res.Error(err.Error()))
 
-			return 
+			return
 		}
 
 		render.JSON(w, r, posts)
