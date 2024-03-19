@@ -45,7 +45,7 @@ Before running the application, make sure Docker and Go are installed on your sy
 3. **Run the application locally**
 
     ```bash
-    # Build and run the application locally
+    # Run the application locally
     make run
     ```
 
