@@ -60,17 +60,12 @@ Before running the application, make sure Docker and Go are installed on your sy
 
 ## Docker
 
-1. Dockerfile
+
    ```bash
    # Build the Docker image
    docker build -t adamenblog-api .
 
    # Run the Docker container
    docker run -d -p 8085:8080 --name adamenblog-api adamenblog-api
-   ```
-2. Docker Hub
-   ```bash
-   docker pull paniccaaa/adamenblog-api
-   docker run -d -p 8085:8080 --name adamenblog-api paniccaaa/adamenblog-api
    ```
 The application will be available at `localhost:8085`.
