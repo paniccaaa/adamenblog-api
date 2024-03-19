@@ -1,26 +1,23 @@
-# Используем образ Golang в качестве базового образа
-FROM golang:latest AS builder
+FROM golang:1.22.1-alpine AS builder
 
-# Устанавливаем рабочую директорию
-WORKDIR /app
+WORKDIR /usr/local/src
 
-# Копируем содержимое текущей директории внутрь контейнера
-COPY . .
+RUN apk --no-cache add bash git make gettext
 
-# Собираем приложение
-RUN go build -o build/adamenblog-api ./cmd/adamenblog-api
+#dependencies
+COPY ["go.mod", "go.sum", "./"] 
+RUN go mod download
 
-# Второй этап сборки
-FROM alpine:latest
+#build
+COPY . ./
+RUN go build -o ./bin/app cmd/adamenblog-api/main.go
 
-# Устанавливаем рабочую директорию
-WORKDIR /app
+FROM alpine AS runner
 
-# Копируем бинарник из предыдущего этапа
-COPY --from=builder /app/build/adamenblog-api /app/adamenblog-api
+COPY --from=builder /usr/local/src/bin/app /
+COPY ./config/local.yaml /config/local.yaml
+COPY .env .env
 
-# Указываем порт, который будет слушать приложение
 EXPOSE 8080
 
-# Запускаем приложение при старте контейнера
-CMD ["/app/adamenblog-api"]
+CMD ["/app"]
