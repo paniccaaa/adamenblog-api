@@ -58,6 +58,13 @@ Before running the application, make sure Docker and Go are installed on your sy
 
     The application will be available at `localhost:8080`.
 
+## Database migration
+  ```bash
+  migrate -path internal/storage/postgres/migration/ -database "postgres://<username>:<password>@<host>:<port>/<database_name>" -verbose up
+  # and
+  migrate -path internal/storage/postgres/migration/ -database "postgres://<username>:<password>@<host>:<port>/<database_name>" -verbose down
+  ```
+
 ## Docker
 
 
